@@ -106,7 +106,7 @@ select {
   --outline-box-shadow-contrast: 0 0 0 2px var(--navy-blue);
 
   /* Fonts */
-  --sans-serif: -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  --sans-serif: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto,
     Ubuntu, Helvetica, sans-serif;
   --monospace: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console,
     monospace;
@@ -378,7 +378,7 @@ ul.notes-list {
   transition: visibility 0s linear 0s, opacity 300ms;
 }
 .sidebar-note-toggle-expand img {
-  width: 10px;
+  width: 24px;
   height: 10px;
 }
 
@@ -606,7 +606,7 @@ ul.notes-list {
 }
 
 .skeleton::after {
-  content: 'Loading...';
+  content: "Loading...";
 }
 .skeleton {
   height: 100%;

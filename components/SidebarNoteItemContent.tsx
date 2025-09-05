@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useTransition } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 export default function SidebarNoteContent({
   id,
@@ -9,13 +9,14 @@ export default function SidebarNoteContent({
   children,
   expandedChildren,
 }: {
-  id: string;
+  id: string | number;
   title: string;
   children: React.ReactNode;
   expandedChildren: React.ReactNode;
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const selectedId = pathname?.split("/")[1] || null;
 
   const [isPending] = useTransition();
@@ -34,6 +35,8 @@ export default function SidebarNoteContent({
       }
     }
   }, [title]);
+
+  const urlParams = new URLSearchParams(searchParams).toString();
 
   return (
     <div
@@ -68,7 +71,7 @@ export default function SidebarNoteContent({
               (sidebarToggle as HTMLInputElement).checked = true;
             }
           }
-          router.push(`/note/${id}`);
+          router.push(`/note/${id}?${urlParams}`);
         }}
       >
         Open note for preview

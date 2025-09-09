@@ -4,6 +4,12 @@ import { redirect } from 'next/navigation'
 import { addNote, updateNote, delNote } from '@/lib/redis';
 import { revalidatePath } from 'next/cache';
 import { z } from "zod";
+import { stat, mkdir, writeFile } from 'fs/promises'
+import { join, extname } from "path";
+// import mime from "mime";
+// 这个更正确
+import mime from "mime-types";
+import dayjs from 'dayjs';
 
 const schema = z.object({
     title: z.string(),
@@ -62,5 +68,53 @@ export async function deleteNote(prevState: FormState, formData: FormData): Prom
     }
     revalidatePath('/', 'layout')
     redirect('/')
+}
+
+export async function importNote(formData: FormData) {
+    const file = formData.get('file')
+
+    // 空值判断
+    if (!file) {
+        return { error: "File is required." };
+    }
+
+    // 写入文件
+    const buffer = Buffer.from(await (file as File).arrayBuffer());
+    const relativeUploadDir = `/uploads/${dayjs().format("YY-MM-DD")}`;
+    const uploadDir = join(process.cwd(), "public", relativeUploadDir);
+
+    try {
+        await stat(uploadDir);
+    } catch (e) {
+        if (e instanceof Error && 'code' in e && e.code === "ENOENT") {
+            await mkdir(uploadDir, { recursive: true });
+        } else {
+            console.error(e)
+            return { error: "Something went wrong." }
+        }
+    }
+
+    try {
+        // 写入文件
+        const uniqueSuffix = `${Math.random().toString(36).slice(-6)}`;
+        const filename = (file as File).name.replace(/\.[^/.]+$/, "")
+        const fileSuffix = mime.lookup((file as File).name) === 'text/markdown' ? 'md' : extname((file as File).name).slice(1)
+        const uniqueFilename = `${filename}-${uniqueSuffix}.${fileSuffix}`;
+        await writeFile(`${uploadDir}/${uniqueFilename}`, buffer);
+
+        // 调用接口，写入数据库
+        const res = await addNote(JSON.stringify({
+            title: filename,
+            content: buffer.toString('utf-8')
+        }))
+
+        // 清除缓存
+        revalidatePath('/', 'layout')
+
+        return { fileUrl: `${relativeUploadDir}/${uniqueFilename}`, uid: res }
+    } catch (e) {
+        console.error(e)
+        return { error: "Something went wrong." }
+    }
 }
 

@@ -22,16 +22,13 @@ export default function ShadcnButton() {
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger className="ml-2 outline-0 bg-amber-500 text-white rounded-2xl px-2">
+      <DropdownMenuTrigger className="ml-2 outline-0 bg-[#03a4f4] text-white rounded-2xl px-2">
         Create
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>select create way</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {/* asChild 直接合并应用组件中的事件行为，使子组件中的行为生效 */}
-        <DropdownMenuItem asChild>
-          <SidebarImport setOpen={setIsOpen} />
-        </DropdownMenuItem>
+        <DropdownMenuItem></DropdownMenuItem>
         <DropdownMenuItem onSelect={handleSelect}>write</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

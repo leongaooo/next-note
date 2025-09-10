@@ -7,12 +7,13 @@ import { Link } from "@/i18n/navigation";
 import { getLocale } from "next-intl/server";
 // import Link from "next/link";
 import ShadcnButton from "@/components/ShadcnButton";
+import AuthControl from "@/components/AuthControl";
 
 export default async function Sidebar() {
   const locale = await getLocale();
   return (
     <div>
-      <section className="col sidebar !h-[calc(100%-28px)]">
+      <section className="col sidebar !h-[calc(100%-50px)]">
         <Link href="/" className="link--unstyled">
           <section className="sidebar-header">
             <img
@@ -36,14 +37,8 @@ export default async function Sidebar() {
           </Suspense>
         </nav>
       </section>
-      <div className="w-[350px] min-w-[250px] h-[28px] bg-[#f5f7fa] text-right">
-        <Link href="/" locale="zh">
-          中文
-        </Link>
-        <span className="mx-2">|</span>
-        <Link href="/" locale="en">
-          English
-        </Link>
+      <div className="w-[350px] min-w-[250px] h-[50px] bg-[#f5f7fa] text-right">
+        <AuthControl />
       </div>
     </div>
   );

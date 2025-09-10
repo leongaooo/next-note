@@ -10,6 +10,7 @@ import { join, extname } from "path";
 // 这个更正确
 import mime from "mime-types";
 import dayjs from 'dayjs';
+import { signOut } from "@/auth"; // 你的 auth.ts 导出
 
 const schema = z.object({
     title: z.string(),
@@ -116,5 +117,9 @@ export async function importNote(formData: FormData) {
         console.error(e)
         return { error: "Something went wrong." }
     }
+}
+
+export async function signOutAction() {
+    await signOut();   // 这里可以传 { redirectTo: '/login' } 等
 }
 

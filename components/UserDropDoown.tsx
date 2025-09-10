@@ -46,7 +46,7 @@ export default function UserDropDown({ user }: { user: User }) {
           <span className="ml-2">...</span>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent side="right">
         {/* asChild 直接合并应用组件中的事件行为，使子组件中的行为生效 */}
         <DropdownMenuItem onSelect={() => handleSelect("zh")}>
           中文

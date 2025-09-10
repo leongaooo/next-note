@@ -42,3 +42,4 @@ next-env.d.ts
 
 # security
 .env.local
+/app/generated/prisma

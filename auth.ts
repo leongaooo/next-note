@@ -1,8 +1,9 @@
 // auth.config.ts
-import NextAuth, { CredentialsSignin } from "next-auth"
+import NextAuth, { CredentialsSignin, User } from "next-auth"
 import GitHub from "next-auth/providers/github" // example provider
 import Credentials from "next-auth/providers/credentials"
 import { signInSchema, ZodError } from "@/lib/zod"
+import { getUser, addUser } from "@/lib/prisma"
 
 class CustomError extends CredentialsSignin {
     code: string
@@ -27,26 +28,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
             authorize: async (credentials) => {
                 try {
+                    let user: User | 0 | 1
                     const { email, password } = await signInSchema.parseAsync(credentials)
-                    // logic to salt and hash password
-                    // const pwHash = saltAndHashPassword(credentials.password)
+                    user = await getUser(email, password)
+                    if (user === 0) {
+                        user = await addUser(email, password)
+                    } else if (user === 1) {
+                        throw new CustomError("密码错误")
+                    }
 
-                    // logic to verify if the user exists
-                    // user = await getUserFromDb(credentials.email, pwHash)
-
-                    // if (!user) {
-                    //   // No user found, so this is their first attempt to login
-                    //   // Optionally, this is also the place you could do a user registration
-                    //   throw new Error("Invalid credentials.")
-                    // }
-
-                    // return user object with their profile data
-
-                    console.log(email, password)
                     return {
+                        userId: user.userId,
+                        username: user.username,
                         email,
-                        password,
-                        userName: email.split("@")[0],
+                        name: user.username?.split("@")[0],
                         image: "https://avatars.githubusercontent.com/u/61813243?v=4"
                     }
                 } catch (error) {
@@ -63,6 +58,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     ],
     session: {
         strategy: "jwt", // ✅ use JWT-based sessions
+    },
+    // 显示回传id
+    callbacks: {
+        jwt: async ({ token, user }) => {
+            if (user) {
+                token.userId = user.userId;
+                token.username = user.username;
+            }
+            return token;
+        },
+        session: async ({ session, token }) => {
+            // ✅ 这里才真正写进 Session
+            session.user.userId = token.userId as string;
+            session.user.username = token.username as string;
+            return session;
+        },
     },
     secret: process.env.AUTH_SECRET, // ✅ must be set in .env
     trustHost: true, // 👈 加上这个

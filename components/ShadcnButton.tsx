@@ -28,7 +28,9 @@ export default function ShadcnButton() {
       <DropdownMenuContent>
         <DropdownMenuLabel>select create way</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem></DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <SidebarImport setOpen={setIsOpen} />
+        </DropdownMenuItem>
         <DropdownMenuItem onSelect={handleSelect}>write</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

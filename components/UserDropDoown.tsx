@@ -10,7 +10,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
-import { User } from "@/types/user";
+import { User } from "next-auth";
 import { signOutAction } from "@/app/actions";
 
 function SignOut(props: { className?: string }) {
@@ -36,7 +36,7 @@ export default function UserDropDown({ user }: { user: User }) {
           {/* 移除直接渲染 user 对象，仅渲染用户名称 */}
           {/* 原代码直接渲染 user 对象会导致类型错误，因为 user 不是 ReactNode 类型 */}
           <Avatar>
-            <AvatarImage src={user?.image} />
+            <AvatarImage src={user.image || ""} />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <span className="ml-2">{user?.name}</span>

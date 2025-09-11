@@ -1,6 +1,5 @@
 import { signIn, auth } from "@/auth";
 import UserDropDown from "@/components/UserDropDoown";
-import { User } from "@/types/user";
 
 function SignIn({ provider, ...props }: { provider?: string }) {
   return (
@@ -26,7 +25,7 @@ export default async function Header() {
   return (
     <header className="h-full">
       {session?.user ? (
-        <UserDropDown user={session.user as User} />
+        <UserDropDown user={session.user} />
       ) : (
         // 注意如果需要本地调试登录，需要代理开全局才可以通
         <SignIn />
